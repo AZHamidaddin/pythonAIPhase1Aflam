@@ -9,9 +9,9 @@ from surprise.model_selection import train_test_split
 from collections import defaultdict
 
 # Load data from CSV files
-movies = pd.read_csv("/Users/waelalkiyani/AIAflam/pythonProject1/movies.csv")
-ratings = pd.read_csv("/Users/waelalkiyani/AIAflam/pythonProject1/ratings.csv")
-tags = pd.read_csv("/Users/waelalkiyani/AIAflam/pythonProject1/tags.csv")
+movies = pd.read_csv("movies.csv")
+ratings = pd.read_csv("ratings.csv")
+tags = pd.read_csv("tags.csv")
 
 # Fill missing genre values with an empty string
 movies["genres"] = movies["genres"].fillna("")
@@ -129,4 +129,6 @@ def interactive_recommendation():
 
 
 # Run the recommendation system
-interactive_recommendation()
+if __name__ == "__main__":
+    interactive_recommendation()
+

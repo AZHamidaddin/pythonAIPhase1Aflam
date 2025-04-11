@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Aflam Movie Recommender</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script>
+    let selectedIndices = [];
+
+    function toggleMovie(card, index, title) {
+      if (selectedIndices.includes(index)) {
+        selectedIndices = selectedIndices.filter(i => i !== index);
+        card.classList.remove("ring", "ring-blue-500");
+      } else {
+        selectedIndices.push(index);
+        card.classList.add("ring", "ring-blue-500");
+      }
+      document.getElementById("movieIndicesInput").value = selectedIndices.join(",");
+      updateTags();
+    }
+
+    function updateTags() {
+      const tagBox = document.getElementById("selected-tags");
+      tagBox.innerHTML = "";
+      selectedIndices.forEach(i => {
+        const tag = document.createElement("span");
+        tag.className = "bg-blue-500 text-white px-3 py-1 rounded-full m-1 inline-block";
+        tag.textContent = document.getElementById("title-" + i).textContent;
+        tagBox.appendChild(tag);
+      });
+    }
+
+    function showMore() {
+      document.querySelectorAll(".hidden-movie").forEach(el => el.classList.remove("hidden"));
+      document.getElementById("show-more-btn").classList.add("hidden");
+    }
+
+    function filterMovies() {
+      const query = document.getElementById("search").value.toLowerCase();
+      document.querySelectorAll(".movie-card").forEach(card => {
+        const title = card.dataset.title.toLowerCase();
+        card.style.display = title.includes(query) ? "block" : "none";
+      });
+    }
+  </script>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+  <div class="max-w-5xl mx-auto py-10">
+    <h1 class="text-3xl font-bold mb-2 text-center text-blue-400">🎬 Aflam Movie Recommender</h1>
+    <p class="text-center text-gray-300 mb-6">Select your favorite movies and get personalized recommendations!</p>
+
+    <div class="flex justify-center mb-4">
+      <input id="search" type="text" placeholder="Search for a movie..." onkeyup="filterMovies()" class="w-1/2 px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white">
+    </div>
+
+    <div id="selected-tags" class="mb-4 text-center"></div>
+
+    <form method="POST">
+      <input type="hidden" name="movie_indices" id="movieIndicesInput">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {% for idx, row in movies %}
+        <div id="movie-{{ idx }}" class="movie-card bg-gray-800 p-4 rounded-lg cursor-pointer {% if idx > 7 %}hidden hidden-movie{% endif %}" data-title="{{ row.title }}" onclick="toggleMovie(this, {{ idx }}, '{{ row.title }}')">
+          <div id="title-{{ idx }}"><strong>{{ row.title }}</strong></div>
+          <div class="text-sm text-gray-400 truncate">{{ row.genres }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="text-center mt-6">
+        <button type="button" onclick="showMore()" id="show-more-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mr-2">Show More Movies</button>
+        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Get Recommendations</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
